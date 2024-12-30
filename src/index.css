@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+    font-family: "PalanquinDark";
+    src: url("assets/fonts/Palanquin_Dark/PalanquinDark-Regular.ttf") format("truetype");
+    src: url("assets/fonts/Palanquin_Dark/PalanquinDark-Bold.ttf") format("truetype");
+    src: url("assets/fonts/Palanquin_Dark/PalanquinDark-SemiBold.ttf") format("truetype");
+    src: url("assets/fonts/Palanquin_Dark/PalanquinDark-Medium.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Onest";
+    src: url("assets/fonts/Onest/static/Onest-Regular.ttf") format("truetype");
+    src: url("assets/fonts/Onest/static/Onest-ExtraBold.ttf") format("truetype");
+    src: url("assets/fonts/Onest/static/Onest-Bold.ttf") format("truetype");
+    src: url("assets/fonts/Onest/static/Onest-SemiBold.ttf") format("truetype");
+    src: url("assets/fonts/Onest/static/Onest-Medium.ttf") format("truetype");
+    src: url("assets/fonts/Onest/static/Onest-Light.ttf") format("truetype");
+    src: url("assets/fonts/Onest/static/Onest-ExtraLight.ttf") format("truetype");
+    src: url("assets/fonts/Onest/static/Onest-Thin.ttf") format("truetype");
+}
