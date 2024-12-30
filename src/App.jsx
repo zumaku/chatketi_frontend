@@ -5,13 +5,11 @@ import { Home } from "./pages";
 export default function App() {
   return (
     <Router>
-      <div className="overflow-x-hidden">
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="*" element={<h1>Not Found</h1>} />
       </Routes>
-      </div>
     </Router>
   );
 }
