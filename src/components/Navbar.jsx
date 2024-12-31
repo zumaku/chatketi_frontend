@@ -34,7 +34,7 @@ const Navbar = () => {
 
         {/* Tombol kanan */}
         <div className="hidden md:block">
-          <Button><a href="">Support Kami</a></Button>
+          <Button><a href="https://saweria.co/zumaku">Support Kami</a></Button>
         </div>
       </div>
 
@@ -45,7 +45,7 @@ const Navbar = () => {
             <Link to="/">Sekilas</Link>
             <Link to="/">Testimoni</Link>
             <Link to="/">Docs</Link>
-            <Button style="w-full justify-center"><a href="">Support Kami</a></Button>
+            <Button style="w-full justify-center"><a href="https://saweria.co/zumaku">Support Kami</a></Button>
           </div>
         </div>
       )}
