@@ -1,8 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import { icon } from "../assets";
 import { CgArrowUpO } from "react-icons/cg";
-import axios from "axios";
 import { Navbar } from "../components";
+import useChatQuery from "../hooks/useChatQuery";
 
 export default function Chat() {
   const [messages, setMessages] = useState([
@@ -14,6 +14,7 @@ export default function Chat() {
   ]);
   const [input, setInput] = useState("");
   const messagesEndRef = useRef(null);
+  const { fetchChatResponse, isLoading, isError } = useChatQuery("http://127.0.0.1:8000/query");
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -24,25 +25,13 @@ export default function Chat() {
 
     const userMessage = { type: "user", text: input };
     setMessages([...messages, userMessage]);
-
     setInput("");
 
-    try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/query",
-        {
-          query: input,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const botMessage = { type: "bot", text: response.data.result };
+    const botResponse = await fetchChatResponse(input);
+
+    if (botResponse !== null) {
+      const botMessage = { type: "bot", text: botResponse };
       setMessages((prevMessages) => [...prevMessages, botMessage]);
-    } catch (error) {
-      console.error("Error fetching response:", error);
     }
   };
 
