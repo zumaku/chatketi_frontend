@@ -20,11 +20,12 @@ export default function Chat() {
       text: "Maaf, sedang terjadi kesalahan.",
     },
   ]);
-  const [input, setInput] = useState("");                 // State untuk menyimpan input teks pengguna.
-  const [loadingIndex, setLoadingIndex] = useState(null); // State untuk melacak pesan bot yang sedang loading.
-  const [errorIndices, setErrorIndices] = useState([]);   // State untuk melacak indeks pesan bot yang mengalami error.
+  const [input, setInput] = useState(""); // State untuk menyimpan input teks pengguna.
+  const [errorIndices, setErrorIndices] = useState([]); // State untuk melacak pesan bot yang error.
   const messagesEndRef = useRef(null);
-  const { fetchChatResponse } = useChatQuery("http://127.0.0.1:8000/query");
+
+  // Ambil fungsi fetchChatResponse, isError, dan isLoading dari hook useChatQuery
+  const { fetchChatResponse, isError, isLoading } = useChatQuery("http://127.0.0.1:8000/query");
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -42,26 +43,33 @@ export default function Chat() {
       ...prevMessages,
       { type: "bot", text: "" },
     ]);
-    setLoadingIndex(botPlaceholderIndex);
 
     const response = await fetchChatResponse(input);
 
     if (response !== null) {
       setMessages((prevMessages) => {
         const updatedMessages = [...prevMessages];
-        updatedMessages[botPlaceholderIndex] = { type: "bot", text: response };
+        updatedMessages[botPlaceholderIndex] = {
+          type: "bot",
+          text: response,
+        };
         return updatedMessages;
       });
     } else {
       setMessages((prevMessages) => {
         const updatedMessages = [...prevMessages];
-        updatedMessages[botPlaceholderIndex] = { type: "bot", text: "Maaf, terjadi kesalahan." };
+        updatedMessages[botPlaceholderIndex] = {
+          type: "bot",
+          text: "Maaf, terjadi kesalahan.",
+        };
         return updatedMessages;
       });
-      setErrorIndices((prevErrorIndices) => [...prevErrorIndices, botPlaceholderIndex]);
-    }
 
-    setLoadingIndex(null);
+      setErrorIndices((prevErrorIndices) => [
+        ...prevErrorIndices,
+        botPlaceholderIndex,
+      ]);
+    }
   };
 
   useEffect(() => {
@@ -100,10 +108,16 @@ export default function Chat() {
                       ? "bg-[#62C3A6] text-black text-end"
                       : "bg-gray-200 text-black"
                   } ${
-                    errorIndices.includes(index) ? "border-2 border-red-300 bg-red-200 font-semibold" : ""
+                    errorIndices.includes(index)
+                      ? "border-2 border-red-300 bg-red-200 font-semibold"
+                      : ""
                   }`}
                 >
-                  {index === loadingIndex ? <LoadingText /> : message.text}
+                  {isLoading && index === messages.length - 1 ? (
+                    <LoadingText />
+                  ) : (
+                    message.text
+                  )}
                 </p>
               </div>
             ))}
