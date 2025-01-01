@@ -1,20 +1,30 @@
 import { useEffect, useState, useRef } from "react";
 import { icon } from "../assets";
 import { CgArrowUpO } from "react-icons/cg";
-import { Navbar } from "../components";
+import { LoadingText, Navbar } from "../components";
 import useChatQuery from "../hooks/useChatQuery";
 
 export default function Chat() {
+  /*
+   * State untuk menyimpan daftar pesan.
+   * Format pesan: { type: "user" | "bot", text: string }
+   */
   const [messages, setMessages] = useState([
     {
       type: "bot",
       text: "Selamat datang! Saya senang dapat membantu Anda memahami pedoman karya tulis ilmiah ini. Apa yang Anda ingin tahu tentang pedoman ini?",
     },
-    // { type: "user", text: "Selamat datang!" },
+    { type: "user", text: "Selamat datang!" },
+    {
+      type: "bot",
+      text: "Maaf, sedang terjadi kesalahan.",
+    },
   ]);
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState("");                 // State untuk menyimpan input teks pengguna.
+  const [loadingIndex, setLoadingIndex] = useState(null); // State untuk melacak pesan bot yang sedang loading.
+  const [errorIndices, setErrorIndices] = useState([]);   // State untuk melacak indeks pesan bot yang mengalami error.
   const messagesEndRef = useRef(null);
-  const { fetchChatResponse, isLoading, isError } = useChatQuery("http://127.0.0.1:8000/query");
+  const { fetchChatResponse } = useChatQuery("http://127.0.0.1:8000/query");
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -27,12 +37,31 @@ export default function Chat() {
     setMessages([...messages, userMessage]);
     setInput("");
 
-    const botResponse = await fetchChatResponse(input);
+    const botPlaceholderIndex = messages.length + 1;
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { type: "bot", text: "" },
+    ]);
+    setLoadingIndex(botPlaceholderIndex);
 
-    if (botResponse !== null) {
-      const botMessage = { type: "bot", text: botResponse };
-      setMessages((prevMessages) => [...prevMessages, botMessage]);
+    const response = await fetchChatResponse(input);
+
+    if (response !== null) {
+      setMessages((prevMessages) => {
+        const updatedMessages = [...prevMessages];
+        updatedMessages[botPlaceholderIndex] = { type: "bot", text: response };
+        return updatedMessages;
+      });
+    } else {
+      setMessages((prevMessages) => {
+        const updatedMessages = [...prevMessages];
+        updatedMessages[botPlaceholderIndex] = { type: "bot", text: "Maaf, terjadi kesalahan." };
+        return updatedMessages;
+      });
+      setErrorIndices((prevErrorIndices) => [...prevErrorIndices, botPlaceholderIndex]);
     }
+
+    setLoadingIndex(null);
   };
 
   useEffect(() => {
@@ -61,18 +90,20 @@ export default function Chat() {
               <div
                 key={index}
                 className={`flex space-x-4 items-start mb-2 ${
-                  message.type === "user" ? "justify-end" : "justify-end"
+                  message.type === "user" ? "justify-end" : "justify-start"
                 }`}
               >
-                {message.type === "bot" && <img src={icon} alt="" />}
+                {message.type !== "user" && <img src={icon} alt="" />}
                 <p
                   className={`max-w-9/12 p-2.5 rounded-lg ${
                     message.type === "user"
                       ? "bg-[#62C3A6] text-black text-end"
                       : "bg-gray-200 text-black"
+                  } ${
+                    errorIndices.includes(index) ? "border-2 border-red-300 bg-red-200 font-semibold" : ""
                   }`}
                 >
-                  {message.text}
+                  {index === loadingIndex ? <LoadingText /> : message.text}
                 </p>
               </div>
             ))}
