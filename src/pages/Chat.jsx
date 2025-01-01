@@ -5,76 +5,52 @@ import { LoadingText, Navbar } from "../components";
 import useChatQuery from "../hooks/useChatQuery";
 
 export default function Chat() {
-  /*
-   * State untuk menyimpan daftar pesan.
-   * Format pesan: { type: "user" | "bot", text: string }
-   */
+  // State untuk menyimpan daftar pesan.
   const [messages, setMessages] = useState([
     {
       type: "bot",
       text: "Selamat datang! Saya senang dapat membantu Anda memahami pedoman karya tulis ilmiah ini. Apa yang Anda ingin tahu tentang pedoman ini?",
     },
-    { type: "user", text: "Selamat datang!" },
-    {
-      type: "bot",
-      text: "Maaf, sedang terjadi kesalahan.",
-    },
   ]);
-  const [input, setInput] = useState(""); // State untuk menyimpan input teks pengguna.
-  const [errorIndices, setErrorIndices] = useState([]); // State untuk melacak pesan bot yang error.
-  const messagesEndRef = useRef(null);
 
-  // Ambil fungsi fetchChatResponse, isError, dan isLoading dari hook useChatQuery
-  const { fetchChatResponse, isError, isLoading } = useChatQuery("http://127.0.0.1:8000/query");
+  const [input, setInput] = useState("");               // State untuk input pengguna
+  const [errorIndices, setErrorIndices] = useState([]); // State untuk menyimpan indeks pesan yang mengalami error
+  const messagesEndRef = useRef(null);                  // Referensi ke elemen terakhir untuk scroll otomatis
+  const { fetchChatResponse, isLoading } = useChatQuery("http://127.0.0.1:8000/query");
 
+  // Fungsi untuk scroll otomatis ke bawah setiap ada pesan baru
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  // Fungsi untuk mengirim pesan
   const handleSend = async () => {
-    if (input.trim() === "") return;
+    if (!input.trim()) return; // Jika input kosong, hentikan proses
 
-    const userMessage = { type: "user", text: input };
-    setMessages([...messages, userMessage]);
-    setInput("");
+    // Tambahkan pesan pengguna dan placeholder untuk bot ke dalam state messages
+    const newMessages = [...messages, { type: "user", text: input }, { type: "bot", text: "" }];
+    const botIndex = newMessages.length - 1; // Indeks placeholder bot
+    setMessages(newMessages); // Update state
+    setInput(""); // Kosongkan input
 
-    const botPlaceholderIndex = messages.length + 1;
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      { type: "bot", text: "" },
-    ]);
-
+    // Ambil respon dari server
     const response = await fetchChatResponse(input);
 
-    if (response !== null) {
-      setMessages((prevMessages) => {
-        const updatedMessages = [...prevMessages];
-        updatedMessages[botPlaceholderIndex] = {
-          type: "bot",
-          text: response,
-        };
-        return updatedMessages;
-      });
-    } else {
-      setMessages((prevMessages) => {
-        const updatedMessages = [...prevMessages];
-        updatedMessages[botPlaceholderIndex] = {
-          type: "bot",
-          text: "Maaf, terjadi kesalahan.",
-        };
-        return updatedMessages;
-      });
+    // Update teks pesan bot dengan respon atau pesan error jika respon null
+    setMessages((prev) =>
+      prev.map((msg, i) =>
+        i === botIndex
+          ? { ...msg, text: response ?? "Maaf, terjadi kesalahan." }
+          : msg
+      )
+    );
 
-      setErrorIndices((prevErrorIndices) => [
-        ...prevErrorIndices,
-        botPlaceholderIndex,
-      ]);
-    }
+    // Jika respon null, tambahkan indeks pesan ke errorIndices
+    if (!response) setErrorIndices((prev) => [...prev, botIndex]);
   };
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+  // Scroll otomatis ke bawah setiap kali daftar pesan berubah
+  useEffect(scrollToBottom, [messages]);
 
   return (
     <main className="h-screen">
