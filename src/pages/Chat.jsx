@@ -59,17 +59,17 @@ export default function Chat() {
         {/* PDF Viewer */}
         <embed
           src="/pedoman-pkti-2023.pdf"
-          className="rounded-xl overflow-hidden w-1/2"
+          className="rounded-xl overflow-hidden w-1/2 sm:block hidden"
           width="100%"
           height="100%"
           type="application/pdf"
         />
 
         {/* Chat */}
-        <div className="w-1/2 pl-5 flex flex-col h-full justify-start relative">
+        <div className="w-full sm:w-1/2 pl-5 flex flex-col h-full justify-start relative">
           {/* Chat */}
-          <h1 className="font-head text-xl mb-3">Chat</h1>
-          <div className="h-[90%] pr-4 pb-4 overflow-y-scroll">
+          <h1 className="font-head text-xl mb-3 sm:block hidden">Chat</h1>
+          <div className="h-[90%] sm:pr-4 sm:pb-4 overflow-y-scroll">
             {messages.map((message, index) => (
               <div
                 key={index}
