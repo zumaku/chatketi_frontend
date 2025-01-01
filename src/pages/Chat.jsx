@@ -25,6 +25,8 @@ export default function Chat() {
     const userMessage = { type: "user", text: input };
     setMessages([...messages, userMessage]);
 
+    setInput("");
+
     try {
       const response = await axios.post(
         "http://127.0.0.1:8000/query",
@@ -42,8 +44,6 @@ export default function Chat() {
     } catch (error) {
       console.error("Error fetching response:", error);
     }
-
-    setInput("");
   };
 
   useEffect(() => {
@@ -71,8 +71,8 @@ export default function Chat() {
             {messages.map((message, index) => (
               <div
                 key={index}
-                className={`flex space-x-4 items-start mb-2 justify-${
-                  message.type === "user" ? "end" : "start"
+                className={`flex space-x-4 items-start mb-2 ${
+                  message.type === "user" ? "justify-end" : "justify-end"
                 }`}
               >
                 {message.type === "bot" && <img src={icon} alt="" />}
