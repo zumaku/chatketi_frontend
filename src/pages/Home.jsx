@@ -16,7 +16,7 @@ export default function Home() {
       <p className="w-full md:w-[575px] text-center">
         Chat dengan asisten AI yang siap membantumu memahami pedoman karya tulis
         ilmiah
-        <span>UIN Alauddin Makassar</span>.
+        <span className="font-bold"> UIN Alauddin Makassar</span>.
       </p>
       <Link to="/chat">
         <Button>
