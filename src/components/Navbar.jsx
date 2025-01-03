@@ -16,9 +16,9 @@ const Navbar = () => {
             <img src={logo} alt="Logo ChatKTI" className="w-40" />
           </Link>
           <div className="hidden md:flex space-x-6">
-            <Link to="/">Sekilas</Link>
-            <Link to="/">Testimoni</Link>
-            <Link to="/">Docs</Link>
+            <Link to="/sekilas">Sekilas</Link>
+            <Link to="/testimoni">Testimoni</Link>
+            <Link to="/docs">Docs</Link>
           </div>
         </div>
 
@@ -34,7 +34,7 @@ const Navbar = () => {
 
         {/* Tombol kanan */}
         <div className="hidden md:block">
-          <Button><a href="https://saweria.co/zumaku">Support Kami</a></Button>
+          <Button><a href="https://saweria.co/zumaku" target="blank">Support Kami</a></Button>
         </div>
       </div>
 
@@ -42,10 +42,10 @@ const Navbar = () => {
       {isOpen && (
         <div className="md:hidden bg-gray-50 border-t border-gray-200">
           <div className="flex flex-col items-start px-4 py-2 space-y-2">
-            <Link to="/">Sekilas</Link>
-            <Link to="/">Testimoni</Link>
-            <Link to="/">Docs</Link>
-            <Button style="w-full justify-center"><a href="https://saweria.co/zumaku">Support Kami</a></Button>
+            <Link to="/sekilas">Sekilas</Link>
+            <Link to="/testimoni">Testimoni</Link>
+            <Link to="/docs">Docs</Link>
+            <Button style="w-full justify-center"><a href="https://saweria.co/zumaku" target="blank">Support Kami</a></Button>
           </div>
         </div>
       )}
