@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { icon } from "../assets";
 import { CgArrowUpO } from "react-icons/cg";
 import { LoadingText, Navbar } from "../components";
-import useChatQuery from "../hooks/useChatQuery";
+import { useChatQuery } from "../hooks";
 
 export default function Chat() {
   // State untuk menyimpan daftar pesan.
